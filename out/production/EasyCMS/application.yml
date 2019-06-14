@@ -1,0 +1,31 @@
+server:
+  port: 8880
+spring:
+   devtools:
+     restart:
+       enabled: true
+   thymeleaf:
+     suffix: .html
+     encoding: UTF-8
+     prefix: classpath:/templates/
+     mode: HTML
+     cache: false
+   datasource:
+     driver-class-name: com.mysql.cj.jdbc.Driver
+     url: jdbc:mysql://111.230.135.188:3306/db_bs_cms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+     username: root
+     password: 1113
+mybatis:
+  type-aliases-package: com.laycoding.cms.pojo
+  mapper-locations: classpath:mapper/*.xml
+logging:
+  level:
+    com:
+      laycoding:
+        cms:
+          mapper: DEBUG
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

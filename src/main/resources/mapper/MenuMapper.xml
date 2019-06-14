@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 该文件编写mybatis中的mapper接口里面的方法提供对应的sql语句 -->
+<mapper namespace="com.laycoding.cms.mapper.MenuMapper">
+    <select id="getAllMenu" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.Menu">
+        select * from sys_tb_menu where id>0
+    </select>
+    <select id="getMenu" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.Menu">
+        select * from sys_tb_menu where id>0 and is_show=0
+    </select>
+    <insert id="addMenu" parameterType="com.laycoding.cms.pojo.Menu">
+        INSERT  INTO  sys_tb_menu(pid,title,icon,url) VALUES ('${pid}','${title}','${icon}','${url}')
+    </insert>
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 该文件编写mybatis中的mapper接口里面的方法提供对应的sql语句 -->
+<mapper namespace="com.laycoding.cms.mapper.UserMapper">
+    <select id="userLogin" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.User">
+        select * from sys_tb_user where sys_user='${sys_user}' and sys_password='${sys_password}'
+    </select>
+    <select id="getByUserName" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.User">
+        select * from sys_tb_user where sys_user=#{sys_user}
+    </select>
+    <select id="getAll" parameterType="java.lang.Integer" resultType="com.laycoding.cms.pojo.User">
+         select * from sys_tb_user where id>0
+    </select>
+
+    <delete id="deleteUserById" parameterType="java.lang.Integer">
+        DELETE FROM sys_tb_user WHERE id=#{id}
+    </delete>
+    <insert id="addUser" parameterType="com.laycoding.cms.pojo.User">
+        INSERT INTO
+        sys_tb_user(sys_user,sys_password,sys_nick)
+        VALUES(#{sys_user}, #{sys_password},#{sys_nick})
+    </insert>
+</mapper>

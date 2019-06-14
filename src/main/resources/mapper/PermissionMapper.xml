@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 该文件编写mybatis中的mapper接口里面的方法提供对应的sql语句 -->
+<mapper namespace="com.laycoding.cms.mapper.PermissionMapper">
+    <insert id="save" parameterType="com.laycoding.cms.pojo.Permission">
+        INSERT INTO
+        sys_permission(name,resource)
+        VALUES(#{name}, #{resource})
+    </insert>
+    <select id="getAllresources" parameterType="com.laycoding.cms.pojo.Permission" resultType="string">
+        select resource from sys_permission where id>0
+    </select>
+    <select id="getAllresourcesName" parameterType="com.laycoding.cms.pojo.Permission" resultType="string">
+        select name from sys_permission where id>0
+    </select>
+    <select id="getPermissionResourceByUseId" parameterType="com.laycoding.cms.pojo.Permission" resultType="string">
+        SELECT resource FROM  sys_permission  WHERE id in
+        (
+          SELECT permission_id FROM sys_role_permission WHERE role_id IN
+        (
+         select role_id from sys_user_role where user_id = #{id}
+         )
+        )
+    </select>
+    <insert id="addPermission" parameterType="com.laycoding.cms.pojo.RolePermission">
+        insert into sys_role_permission(pid,role_id,permission_id)  values (#{pid},#{role_id},#{permission_id})
+    </insert>
+     <delete id="deleteRolePermission" parameterType="java.lang.Integer">
+         DELETE FROM sys_role_permission WHERE id=#{id}
+     </delete>
+</mapper>

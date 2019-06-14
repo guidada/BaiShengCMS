@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 该文件编写mybatis中的mapper接口里面的方法提供对应的sql语句 -->
+<mapper namespace="com.laycoding.cms.mapper.UserRoleMapper">
+    <select id="checkRoleById" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.UserRole">
+        select * from sys_user_role
+        <where>
+            <if test="user_id!=0">
+                user_id= #{user_id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addRole" parameterType="com.laycoding.cms.pojo.UserRole">
+        INSERT INTO
+        sys_user_role(user_id,role_id)
+        VALUES(#{user_id}, #{role_id})
+    </insert>
+</mapper>

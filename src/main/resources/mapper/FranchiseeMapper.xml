@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 该文件编写mybatis中的mapper接口里面的方法提供对应的sql语句 -->
+<mapper namespace="com.laycoding.cms.mapper.FranchiseeMapper">
+    <select id="getByRegion" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.Franchisee">
+        SELECT * FROM `sys_franchisee` WHERE sys_cs_region LIKE #{sys_cs_region}
+        <if test="sys_cs_project!=0">
+            and sys_cs_project = #{sys_cs_project}
+       </if>
+    </select>
+    <select id="getFranchiseeByIf" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.Franchisee">
+        select * from sys_franchisee
+        <where>
+            <if test="sys_cs_id!=0">
+                and sys_cs_id = #{sys_cs_id} and sys_cs_status !=2
+            </if>
+            <if test="sys_cs_name!=null">
+                and sys_cs_name = #{sys_cs_name} and sys_cs_status !=2
+            </if>
+            <if test="sys_cs_company!=null">
+                and sys_cs_company LIKE '%' #{sys_cs_company} '%' and sys_cs_status !=2
+            </if>
+            <if test="sys_cs_phone!=null">
+                and sys_cs_phone = #{sys_cs_phone} and sys_cs_status !=2
+            </if>
+        </where>
+
+    </select>
+    <select id="getFranchiseeById" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.Franchisee">
+        select * from sys_franchisee
+        <where>
+            <if test="sys_cs_id!=0">
+                sys_cs_id = #{sys_cs_id}
+            </if>
+        </where>
+    </select>
+    <select id="getRegion" resultType="string">
+        select sys_cs_region from sys_franchisee
+    </select>
+
+    <select id="getAllContract" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.Franchisee">
+        select * from sys_franchisee
+        <where>
+            <if test="sys_cs_id!=0">
+                and sys_cs_id = #{sys_cs_id}
+            </if>
+            <if test="sys_cs_name!=''">
+                and sys_cs_name = #{sys_cs_name}
+            </if>
+            <if test="sys_cs_status!=-1">
+                and sys_cs_status = #{sys_cs_status}
+            </if>
+        </where>
+    </select>
+    <insert id="addFranchisee" parameterType="com.laycoding.cms.pojo.Franchisee">
+        INSERT  INTO  sys_franchisee(
+        sys_cs_id,
+        sys_cs_name,
+        sys_cs_phone,
+        sys_cs_type,
+        sys_cs_company,
+        sys_cs_num,
+        sys_cs_money,
+        sys_cs_project,
+        sys_cs_license,
+        sys_cs_idcard,
+        sys_cs_region,
+        sys_cs_address,
+        sys_cs_sex,
+        sys_company_address,
+        sys_cs_zipcode,
+        sys_cs_email,
+        sys_cs_remarks,
+        sys_create_time,
+        sys_over_time
+        ) VALUES (
+        #{sys_cs_id},
+        #{sys_cs_name},
+        #{sys_cs_phone},
+        #{sys_cs_type},
+        #{sys_cs_company},
+        #{sys_cs_num},
+        #{sys_cs_money},
+        #{sys_cs_project},
+        #{sys_cs_license},
+        #{sys_cs_idcard},
+        #{sys_cs_region},
+        #{sys_cs_address},
+        #{sys_cs_sex},
+        #{sys_company_address},
+        #{sys_cs_zipcode},
+        #{sys_cs_email},
+        #{sys_cs_remarks},
+        #{sys_create_time},
+        #{sys_over_time}
+        )
+    </insert>
+    <delete id="deleteFranchisee" parameterType="java.lang.Integer">
+        DELETE FROM sys_franchisee WHERE sys_cs_id=#{sys_cs_id}
+    </delete>
+
+    <update id="updateStatus">
+        UPDATE sys_franchisee SET `sys_cs_status`=#{sys_cs_status} WHERE sys_cs_id=#{sys_cs_id};
+    </update>
+    <update id="updateContract">
+        UPDATE sys_franchisee SET `sys_cs_status`=2 WHERE id=#{id};
+    </update>
+    <update id="updateFranchisee">
+        UPDATE sys_franchisee SET
+        `sys_cs_name`= #{sys_cs_name},
+        `sys_cs_phone`= #{sys_cs_phone},
+        `sys_cs_type`=#{sys_cs_type},
+        `sys_cs_company`= #{sys_cs_company},
+        `sys_cs_num`=#{sys_cs_num},
+        `sys_cs_money`=#{sys_cs_money},
+        `sys_cs_project`= #{sys_cs_project},
+        `sys_cs_license`=#{sys_cs_license},
+        `sys_cs_idcard`=#{sys_cs_idcard},
+        `sys_cs_region`=#{sys_cs_region},
+        `sys_cs_address`=#{sys_cs_address},
+        `sys_cs_sex`=#{sys_cs_sex},
+        `sys_company_address`=#{sys_company_address},
+        `sys_cs_zipcode`=#{sys_cs_zipcode},
+        `sys_cs_email`=#{sys_cs_email},
+        `sys_cs_remarks`=#{sys_cs_remarks},
+        `sys_create_time`=#{sys_create_time},
+        `sys_over_time`=#{sys_over_time}
+        WHERE
+        sys_cs_id=#{sys_cs_id};
+    </update>
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 该文件编写mybatis中的mapper接口里面的方法提供对应的sql语句 -->
+<mapper namespace="com.laycoding.cms.mapper.ContractMapper">
+    <insert id="addImage" parameterType="com.laycoding.cms.pojo.Contract">
+        INSERT  INTO  sys_tb_contract(sys_ct_num,sys_ct_image) VALUES (#{sys_ct_num},#{sys_ct_image})
+    </insert>
+     <delete id="clearFranchisee">
+         DELETE FROM sys_tb_contract WHERE sys_ct_num=#{sys_ct_num}
+     </delete>
+    <select id="getImageByNum" resultType="string">
+         select sys_ct_image from sys_tb_contract where sys_ct_num=#{sys_ct_num}
+    </select>
+</mapper>

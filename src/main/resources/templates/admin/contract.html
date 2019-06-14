@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>合同管理</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{../assets/libs/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{../assets/module/admin.css?v=311}"/>
+</head>
+<body>
+
+<!-- 页面加载loading -->
+<div class="page-loading">
+    <div class="ball-loader">
+        <span></span><span></span><span></span><span></span>
+    </div>
+</div>
+
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label w-auto">合同编号：</label>
+                    <div class="layui-input-inline mr0">
+                        <input id="sys_ct_num" class="layui-input" type="text" placeholder="输入合同编号"/>
+                    </div>
+                </div>
+            <div class="layui-inline">
+                <label class="layui-form-label w-auto">签订人：</label>
+                <div class="layui-input-inline mr0">
+                    <input id="sys_ct_name" class="layui-input" type="text" placeholder="输入合同联系人"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <select id="sys_ct_status">
+                    <option value="">合同状态</option>
+                    <option value="0">未审核</option>
+                    <option value="1">已审核</option>
+                    <option value="2">已到期</option>
+                </select>
+            </div>
+            <div class="layui-inline">
+                <button id="btnSearch" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+                <button id="btnExp" class="layui-btn icon-btn"><i class="layui-icon">&#xe67d;</i>导出</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <table class="layui-table" id="logTable" lay-filter="logTable"></table>
+</div>
+
+<script type="text/html" id="barDemo">
+
+</script>
+<!-- js部分 -->
+<script type="text/javascript" src="../assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="../assets/js/common.js?v=311"></script>
+<script>
+    layui.use(['layer', 'form', 'table', 'util', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var util = layui.util;
+        var laydate = layui.laydate;
+        var arr=[
+            {type: 'checkbox'},
+            {field: 'sys_cs_id',align: 'center', title: '合同编号'},
+            {field: 'sys_cs_name', align: 'center',title: '联系人'},
+            {field: 'sys_cs_phone', align: 'center',title: '联系电话'},
+            {field: 'sys_cs_type',align: 'center', title: '合同类型'},
+            {field: 'sys_cs_money', align: 'center',title: '已收账款'},
+            {field: 'sys_cs_num',align: 'center', title: '应收帐款'},
+            {align: 'center', title: '合同状态',templet: function (item) {
+                if (item.sys_cs_status==0) {
+                        return "<button class='layui-btn layui-btn-xs layui-btn-disabled'>审核中</button>";
+                    }
+                if (item.sys_cs_status==1) {
+                    var now = new Date();
+                    var t = item.sys_over_time;
+                    var T = new Date(t);
+                    if (parseInt(now.getTime())>parseInt(T.getTime())) {
+                        updateStatus(item.id);
+                    }
+                        return "<button class='layui-btn layui-btn-xs layui-btn-primary'>已审核</button>";
+                    }
+                    if (item.sys_cs_status==2) {
+                        return "<button class='layui-btn layui-btn-xs layui-btn-danger'>已到期</button>";
+                    }
+                }
+            },
+            {fixed: 'right', title:'操作',width:240,align: 'center',templet:function (item) {
+                    if (item.sys_cs_status==0){
+                        return   ' <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="preview">查看</a>\n' +
+                                 ' <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>\n'+
+                                 ' <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="pass">通过</a>\n'+
+                            '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>\n';
+                    }
+                    if (item.sys_cs_status==1){
+                        return   ' <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="preview">查看</a>\n' +
+                                 '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>\n'+
+                              '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>\n';
+                    }
+                    if (item.sys_cs_status==2){
+                        return   ' <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="preview">查看</a>\n' +
+                            '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>\n'+
+                        ' <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="renewal">续期</a>\n' +
+                            '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>\n';
+                    }
+                }
+            }
+        ];
+        // 渲染表格
+        // 搜索按钮点击事件
+        $('#btnSearch').click(function () {
+             var sys_ct_num=0;
+             var sys_ct_name=null;
+            var sys_ct_status=-1;
+             if ($("#sys_ct_num").val()!=""){
+                 sys_ct_num=parseInt($("#sys_ct_num").val());
+             }
+            if ($("#sys_ct_name").val()!=""){
+                sys_ct_name=$("#sys_ct_name").val();
+            }
+            if ($("#sys_ct_status").val()!=""){
+                sys_ct_status=parseInt($("#sys_ct_status").val());
+            }
+            getList(sys_ct_num,sys_ct_name,sys_ct_status);
+        });
+        var insTb;
+        function updateStatus(id) {
+            $.ajax({
+                type: "POST",
+                url: "/sys/franchisee/updateContract",
+                data: {
+                    id: id
+                },
+                dataType: "json",
+                success: function (data) {
+                }
+            });
+        }
+       function  getList(sys_ct_num,sys_ct_name,sys_ct_status) {
+           insTb=  table.render({
+               elem: '#logTable',
+               url: '/sys/franchisee/getAllContract',
+               page: true,
+               cellMinWidth: 100,
+               where: {
+                   sys_ct_num: sys_ct_num,
+                   sys_ct_name: sys_ct_name,
+                   sys_ct_status: sys_ct_status
+               },
+               text: {
+                   none: '暂无相关数据'
+               },
+               cols: [arr]
+               ,response: {
+                   statusCode: 0 //重新规定成功的状态码为 200，table 组件默认为 0
+               }
+               ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                   if (res.total>0){
+                       return {
+                           "code": 0, //解析接口状态
+                           "msg": res.message, //解析提示文本
+                           "count": res.total, //解析数据长度
+                           "data": res.list //解析数据列表
+                       };
+                   }
+               }
+           });
+       }
+        table.on('tool(logTable)', function (obj) {
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值
+            if (layEvent === 'renewal') {
+                layer.confirm('请确认合同是否续期？', {
+                    btn: ['通过','取消'] //按钮
+                }, function(){
+                    $.ajax({
+                        type: "POST",
+                        url:"/sys/franchisee/updateStatus",
+                        data:{
+                            sys_cs_id:data.sys_cs_id,
+                            sys_cs_status:1
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.code==0){
+                                layer.msg("续期成功！",{icon:1})
+                                setTimeout(function () {
+                                    layer.closeAll();
+                                    window.location.reload();
+                                },1000)
+                            }
+                        },
+                    });
+                });
+            }
+             if (layEvent === 'delete') {
+                var  sys_id=data.sys_cs_id;
+                 layer.confirm('请确认是否删除？', {
+                     btn: ['确定','取消'] //按钮
+                 }, function(){
+                     $.ajax({
+                         type: "POST",
+                         url:"/sys/franchisee/deleteFranchisee",
+                         data:{
+                             sys_cs_id:sys_id
+                         },
+                         dataType: "json",
+                         success: function (data) {
+                             if (data.code==0){
+                                 layer.msg("已删除,正在删除合同存照...",{icon:1})
+                                 setTimeout(function () {
+                                     clearImage(sys_id);
+                                 },1500)
+                             }
+                         },
+                     });
+                 }, function(){
+                     layer.msg("已取消")
+                 });
+              }
+              if (layEvent === 'preview') { // 查看
+                localStorage.setItem("sys_cs_id",data.sys_cs_id);
+                $.ajax({
+                    type: "POST",
+                    url: "/sys/contract/getImageByNum",
+                    data: {
+                        sys_ct_num: localStorage.getItem("sys_cs_id")
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        localStorage.setItem("sys_cs_image",data);
+                    }
+                });
+                layer.open({
+                    type: 2
+                    ,title:"合同详情~"
+                   ,content:"contract-preview"
+                    ,area:['800px','500px']
+                    ,shade: 0.3
+                    ,maxmin:true
+                    ,shadeClose:true
+                    ,yes: function(){
+                        layer.closeAll();
+                    }
+                });
+            } else if (layEvent === 'edit') { // 删除
+                //layer.msg('点击了编辑');
+                localStorage.setItem("sys_cs_id",data.sys_cs_id);
+                layer.open({
+                    type: 2
+                    ,title:"合同编辑~"
+                    ,content:"contract-edit"
+                    ,area:['800px','500px']
+                    ,shade: 0.3
+                    ,maxmin:true
+                    ,shadeClose:true
+                    ,yes: function(){
+                        layer.closeAll();
+                    }
+                });
+            }
+            else if (layEvent === 'pass') { // 删除
+              //  layer.msg('点击了修改');
+                layer.confirm('请确认合同是否通过？', {
+                    btn: ['通过','取消'] //按钮
+                }, function(){
+                    $.ajax({
+                        type: "POST",
+                        url:"/sys/franchisee/updateStatus",
+                        data:{
+                            sys_cs_id:data.sys_cs_id,
+                            sys_cs_status:1
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                             if (data.code==0){
+                                 layer.msg("审核通过",{icon:1})
+                                 setTimeout(function () {
+                                     layer.closeAll();
+                                     window.location.reload();
+                                 },1000)
+                             }
+                        },
+                    });
+                }, function(){
+                       layer.msg("已取消")
+                });
+            }
+        });
+        function clearImage(index){
+            $.ajax({
+                type: "POST",
+                url: "/sys/contract/clearFranchisee",
+                data: {
+                    sys_ct_num:index
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code==0){
+                        layer.msg("清除成功！",{icon:1})
+                        setTimeout(function () {
+                            layer.closeAll();
+                            window.location.reload();
+                        },1500)
+                    }
+                }
+            });
+        }
+       //
+        // 导出excel
+        $('#btnExp').click(function () {
+            var checkRows = table.checkStatus('logTable');
+            if (checkRows.data.length == 0) {
+                layer.msg('请选择要导出的数据', {icon: 2});
+            } else {
+                table.exportFile(insTb.config.id, checkRows.data, 'xls');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

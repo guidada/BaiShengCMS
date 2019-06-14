@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>合同管理</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{../assets/libs/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{../assets/module/admin.css?v=311}"/>
+</head>
+<body>
+
+<!-- 页面加载loading -->
+<div class="page-loading">
+    <div class="ball-loader">
+        <span></span><span></span><span></span><span></span>
+    </div>
+</div>
+
+<!-- 正文开始 -->
+<div class="layui-fluid">
+  <div class="layui-row">
+       <div class="layui-col-xs12 layui-col-sm12 layui-col-lg6">
+           <table class="layui-table">
+               <colgroup>
+                   <col width="100">
+                   <col width="150">
+                   <col width="100">
+                   <col width="150">
+               </colgroup>
+               <tbody>
+               <tr>
+                   <td>合同编号</td>
+                   <td id="sys_cs_id"></td>
+                   <td>代理项目</td>
+                   <td id="sys_cs_project"></td>
+               </tr>
+               <tr>
+                   <td>联系人</td>
+                   <td id="sys_cs_name"></td>
+                   <td>联系电话</td>
+                   <td id="sys_cs_phone"></td>
+               </tr>
+               <tr>
+                   <td>已收账款</td>
+                   <td id="sys_cs_money"></td>
+                   <td>应收账款</td>
+                   <td id="sys_cs_num"></td>
+               </tr>
+               <tr>
+                   <td>身份证号</td>
+                   <td id="sys_cs_idcard"></td>
+                   <td>性别</td>
+                   <td id="sys_cs_sex"></td>
+               </tr>
+               <tr>
+                   <td>加盟区域</td>
+                   <td id="sys_cs_region"></td>
+                   <td>办公地址</td>
+                   <td id="sys_cs_region1"></td>
+               </tr>
+               <tr>
+                   <td>加盟时间</td>
+                   <td id="sys_create_time"></td>
+                   <td>授权结束日期</td>
+                   <td id="sys_over_time"></td>
+               </tr>
+               <tr>
+                   <td>备 注</td>
+                   <td colspan="3" id="sys_cs_remarks"></td>
+               </tr>
+               <tr>
+                   <td>详细地址</td>
+                   <td  colspan="3" id="sys_cs_address"></td>
+               </tr>
+               </tbody>
+           </table>
+       </div>
+      <div class="layui-col-xs12 layui-col-sm12 layui-col-lg6">
+          <fieldset class="layui-elem-field">
+              <legend>合同照</legend>
+              <div class="layui-field-box" style="text-align: center">
+                   <div class="layui-upload-list layui-row layui-col-space10" id="demo2">
+
+                   </div>
+              </div>
+          </fieldset>
+      </div>
+  </div>
+</div>
+
+    <!-- js部分 -->
+    <script type="text/javascript" src="../assets/libs/layui/layui.js"></script>
+    <script type="text/javascript" src="../assets/js/common.js?v=311"></script>
+    <script>
+        layui.use(['layer', 'form', 'table', 'util', 'laydate','printer','contextMenu'], function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var table = layui.table;
+            var util = layui.util;
+            var printer = layui.printer;
+            var laydate = layui.laydate;
+            var str=localStorage.getItem("projects");
+            // 重写整个页面右键菜单
+            $("html").dblclick(function(){
+                printer.print();
+            });
+            $("tr td:nth-child(odd)").css("background-color","#f0ffff");
+            function getProjectName(index) {
+                var arr=str.split(",");
+                return arr[index];
+            }
+            // 打印当前页面
+            $('#btnPrint1').click(function () {
+                printer.print();
+            });
+            $.ajax({
+                type: "POST",
+                url: "/sys/franchisee/getFranchiseeById",
+                data: {
+                    sys_ct_num:localStorage.getItem("sys_cs_id")
+                },
+                dataType: "json",
+                success: function (data) {
+                    var images=localStorage.getItem("sys_cs_image").split(",");
+                    var res = data.data[0];
+                    if (data.code == 0) {
+                        $("#sys_cs_id").text(res.sys_cs_id);
+                        $("#sys_cs_name").text(res.sys_cs_name);
+                        $("#sys_cs_company").text(res.sys_cs_company);
+                        $("#sys_cs_phone").text(res.sys_cs_phone);
+                        $("#sys_cs_address").text(res.sys_cs_address);
+                        $("#sys_cs_zipcode").text(res.sys_cs_zipcode);
+                        $("#sys_cs_region").text(res.sys_cs_region);
+                        $("#sys_cs_region1").text(res.sys_company_address);
+                        $("#sys_cs_email").text(res.sys_cs_email);
+                        $("#sys_cs_idcard").text(res.sys_cs_idcard);
+                        $("#sys_create_time").text(res.sys_create_time);
+                        $("#sys_over_time").text(res.sys_over_time);
+                        $("#sys_cs_num").text(res.sys_cs_num+".00");
+                        $("#sys_cs_sex").text(getSex(res.sys_cs_sex));
+                        $("#sys_cs_money").text(res.sys_cs_money+".00");
+                        $("#sys_cs_remarks").text(res.sys_cs_remarks);
+                        $("#sys_cs_project").text(getProjectName(res.sys_cs_project));
+                        for (var i=0;i<images.length;i++){
+                            var  image="/upload/"+res.sys_cs_id+"/"+images[i];
+                            $('#demo2').append('<div class="layui-col-sm6"><img class="openImg" style="width: 300px;height: 240px" src="'+ image +'"></div>')
+                        }
+                    }
+                }
+            });
+            function getSex(str){
+                if (str==0){
+                    return "男";
+                } else {
+                    return "女";
+                }
+            }
+            $(document).on('click','.openImg',function () {
+                var image=$(this).attr('src');
+                layer.open({
+                    type: 1,
+                    title:"查看合同照",
+                    skin: 'layui-layer-rim', //加上边框
+                    area: ['600px', '450px'] //宽高
+                    ,shade: 0.3
+                    ,maxmin:true
+                    ,shadeClose:true,
+                    content: '<div class="layui-fluid" style="text-align: center"><img src="'+image+'" alt=""></div>'
+                });
+            })
+        });
+    </script>
+
+</body>
+</html>

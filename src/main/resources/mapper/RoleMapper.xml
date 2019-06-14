@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 该文件编写mybatis中的mapper接口里面的方法提供对应的sql语句 -->
+<mapper namespace="com.laycoding.cms.mapper.RoleMapper">
+    <select id="getAllRoles" parameterType="com.laycoding.cms.pojo.Role" resultType="string">
+        select * from sys_role where id>0
+    </select>
+    <select id="getRoleByUserId" parameterType="com.laycoding.cms.pojo.Role" resultType="string">
+        select sn from sys_role where id in (
+        select role_id from sys_user_role where user_id = #{id}
+        )
+    </select>
+    <select id="findAll" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.Role">
+        SELECT * FROM role where id>0
+    </select>
+    <select id="getRolePermission" parameterType="java.lang.String" resultType="com.laycoding.cms.pojo.RolePermission">
+        SELECT * FROM sys_role_permission where id>0
+    </select>
+    <update id="editRole">
+        UPDATE sys_role SET `sn`=#{sn},`name`=#{name} WHERE id=#{id};
+    </update>
+</mapper>

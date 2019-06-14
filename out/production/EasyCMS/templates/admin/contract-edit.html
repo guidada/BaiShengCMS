@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>合同编辑</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{../assets/libs/layui/css/layui.css}"/>
+    <link rel="stylesheet" href="../../assets/module/admin.css?v=311"/>
+    <link rel="stylesheet" href="../assets/module/city-picker/city-picker.css"/>
+    <script src="../assets/module/city-picker/city-picker.data.js"></script>
+    <style>
+        .layui-form-item {
+            margin-bottom: 0;
+            margin-top: 20px;
+        }
+
+        .layui-form-item .layui-inline {
+            margin-bottom: 25px;
+            margin-right: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- 加载动画，移除位置在common.js中 -->
+<div class="page-loading">
+    <div class="ball-loader">
+        <span></span><span></span><span></span><span></span>
+    </div>
+</div>
+
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">合同基本信息</li>
+            <li>更新合同照片</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                <div class="layui-card-body">
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>个人信息</legend>
+                    </fieldset>
+                    <form class="layui-form layui-form-pane" lay-filter="test1">
+                        <div class="layui-form-item layui-row">
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">姓 名:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_cs_name" type="text" placeholder="请输入加盟商姓名" class="layui-input" lay-verify="required"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">联系电话:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_cs_phone" type="text" placeholder="请输入联系电话" class="layui-input" lay-verify="required|phone"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">性别:</label>
+                                <div class="layui-input-block">
+                                    <select name="sys_cs_sex" lay-verify="required">
+                                        <option value="">请选择性别</option>
+                                        <option value="0">男</option>
+                                        <option value="1">女</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">身份证号:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_cs_idcard" lay-verify="required|identity" type="text" placeholder="请输入加盟商身份证号" class="layui-input"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md8">
+                                <label class="layui-form-label">详细地址:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_cs_address" lay-verify="required" type="text" placeholder="请输入加盟商详细地址" class="layui-input"/>
+                                </div>
+                            </div>
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <legend>合同信息</legend>
+                            </fieldset>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">合同编号:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_cs_id" disabled="disabled" lay-verify="required|number" type="text" placeholder="请输入合同编号" class="layui-input"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">合同类型:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_cs_type" type="text" lay-verify="required" placeholder="请输入合同类型" class="layui-input"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">项目类型:</label>
+                                <div class="layui-input-block">
+                                    <select name="sys_cs_project" id="sys_cs_project" lay-verify="required">
+                                        <option value="">请选择项目</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">加盟区域:</label>
+                                <div class="layui-input-block mr0">
+                                    <input name="sys_cs_region" autocomplete="off" id="edtCity" class="layui-input" type="text" placeholder="选择加盟区域"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md8">
+                                <label class="layui-form-label">办公地址:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_company_address" autocomplete="off" type="text" placeholder="请输入办公地址" class="layui-input"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">代理备注:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_cs_remarks" autocomplete="off" lay-verify="required" type="text" placeholder="请输入代理备注" class="layui-input"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">应收账款:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_cs_num" autocomplete="off" type="text" placeholder="请输入应收账款" class="layui-input"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">已收账款:</label>
+                                <div class="layui-input-block">
+                                    <input name="sys_cs_money" autocomplete="off"  type="text" placeholder="请输入已收账款" class="layui-input"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">生效时间:</label>
+                                <div class="layui-input-block">
+                                    <input id="dateRange02" autocomplete="off" lay-verify="required" name="sys_create_time" type="text" placeholder="请选择合同生效时间"
+                                           class="layui-input date-icon"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4">
+                                <label class="layui-form-label">到期时间:</label>
+                                <div class="layui-input-block">
+                                    <input id="dateRange03" name="sys_over_time" autocomplete="off" lay-verify="required" type="text" placeholder="请选择合同到期时间"
+                                           class="layui-input date-icon"/>
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-col-md4" style="text-align: center">
+                                <button class="layui-btn" lay-filter="formDemo" lay-submit>&emsp;更 新&emsp;</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+            </div>
+            <div class="layui-tab-item">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <div class="layui-form layui-form-pane">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                <label class="layui-form-label">合同编号</label>
+                                <div class="layui-input-inline">
+                                    <input id="sys_ct_num" name="sys_ct_num" type="text" lay-verify="required|number" placeholder="请输入合同编号" class="layui-input" />
+                                </div>
+                                </div>
+                                <div class="layui-inline">
+                                  <div class="layui-input-inline">
+                                    <button class="layui-btn layui-btn-danger" lay-filter="clearImage" lay-submit>清空</button>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <fieldset class="layui-elem-field">
+                            <legend>上传合同文件</legend>
+                            <div class="layui-field-box">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="imageBtn" >上 传</button>
+                                        <div class="layui-upload-list layui-row layui-col-space10" id="demo2">
+                                        </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- js部分 -->
+
+<script type="text/javascript" src="../../assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="../../assets/js/common.js?v=311"></script>
+
+<script>
+    layui.use(['layer', 'form','citypicker', 'upload', 'element', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var upload = layui.upload;
+        var element = layui.element;
+        var laydate = layui.laydate;
+        var cityPicker = layui.citypicker;
+        var cp = new cityPicker("#edtCity");
+        function getCity(){
+            var  str=cp.getVal();
+            if (str.indexOf("/")!=-1) {
+                var arr = str.split("/");
+                var res = "";
+                for (var i = 0; i < arr.length; i++) {
+                    res = res + arr[i];
+                }
+                return res;
+            }else {
+                return "";
+            }
+        }
+        laydate.render({
+            elem: '#dateRange02',
+            format:'yyyy-MM-dd HH:mm:ss'
+        });
+        laydate.render({
+            elem: '#dateRange03',
+            format:'yyyy-MM-dd HH:mm:ss'
+        });
+        $.ajax({
+            type: "POST",
+            url: "/sys/franchisee/getFranchiseeById",
+            data: {
+                sys_ct_num:localStorage.getItem("sys_cs_id")
+            },
+            dataType: "json",
+            success: function (data) {
+                var res = data.data[0];
+                cp.setValue(res.sys_cs_region);
+                if (data.code == 0) {
+                    form.val("test1", {
+                         "sys_cs_name": res.sys_cs_name
+                        ,"sys_cs_sex": res.sys_cs_sex
+                        ,"sys_cs_id": res.sys_cs_id
+                        ,"sys_cs_project": res.sys_cs_project
+                        ,"sys_cs_type": res.sys_cs_type
+                        ,"sys_cs_address": res.sys_cs_address
+                        ,"sys_company_address": res.sys_company_address
+                        ,"sys_cs_phone": res.sys_cs_phone
+                        ,"sys_cs_money": res.sys_cs_money
+                        ,"sys_cs_num": res.sys_cs_num
+                        ,"sys_cs_remarks": res.sys_cs_remarks
+                        ,"sys_create_time": res.sys_create_time
+                        ,"sys_over_time": res.sys_over_time
+                        ,"sys_cs_idcard": res.sys_cs_idcard
+                    })
+                }
+            }
+        });
+        form.on('submit(clearImage)', function (data) {
+            var  sys_num=parseInt(data.field.sys_ct_num);
+            layer.confirm('确认清除吗？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                layer.msg('清除中...', {icon: 1});
+                clearImage(sys_num);
+            }, function(){
+                layer.msg('已取消', {icon: 1});
+            });
+        });
+      function clearImage(index){
+          $.ajax({
+              type: "POST",
+              url: "/sys/contract/clearFranchisee",
+              data: {
+                  sys_ct_num:index,
+              },
+              dataType: "json",
+              success: function (data) {
+                  if (data.code==0){
+                      layer.msg("清除成功,请重新上传！",{icon:1})
+                      setTimeout(function () {
+                          layer.closeAll();
+                      },1500)
+                  }
+              }
+          });
+      }
+        form.on('submit(formDemo)', function (data) {
+            //layer.msg(JSON.stringify(data.field));
+            layer.confirm('请确认合同信息是否有误', {
+                btn: ['无误','好的'] //按钮
+            }, function(){
+                $.ajax({
+                    type: "POST",
+                    url: "/sys/franchisee/updateFranchisee",
+                    data: {
+                        sys_cs_id:parseInt(data.field.sys_cs_id),
+                        sys_cs_name:data.field.sys_cs_name,
+                        sys_cs_phone:data.field.sys_cs_phone,
+                        sys_cs_type:data.field.sys_cs_type,
+                        sys_cs_company:data.field.sys_cs_company,
+                        sys_cs_num:data.field.sys_cs_num,
+                        sys_cs_money:data.field.sys_cs_money,
+                        sys_cs_project:parseInt(data.field.sys_cs_project),
+                        sys_cs_license:data.field.sys_cs_license,
+                        sys_cs_idcard:data.field.sys_cs_idcard,
+                        sys_cs_region:cp.getVal(),
+                        sys_cs_address:data.field.sys_cs_address,
+                        sys_cs_sex:parseInt(data.field.sys_cs_sex),
+                        sys_company_address:data.field.sys_company_address,
+                        sys_cs_zipcode:data.field.sys_cs_zipcode,
+                        sys_cs_email:data.field.sys_cs_email,
+                        sys_cs_remarks:data.field.sys_cs_remarks,
+                        sys_create_time:data.field.sys_create_time,
+                        sys_over_time:data.field.sys_over_time
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code==0){
+                            layer.msg("修改信息成功",{icon:1})
+                            setTimeout(function () {
+                                layer.closeAll();
+                            },1500)
+                        }
+                    }
+                });
+            },function(){
+                layer.msg("已取消提交",{icon:1})
+            });
+            return false;
+        });
+        var str=localStorage.getItem("projects");
+        var arr1=str.split(",");
+        for (var i=1;i<arr1.length;i++){
+            $("#sys_cs_project").append(' <option value="'+i+'">'+arr1[i]+'</option>')
+        }
+        form.render('select', 'test1');
+            upload.render({
+                elem: '#imageBtn'
+                ,url: '/file/fileUploads'
+                ,multiple: true
+                ,data: {
+                    sys_cs_num: function(){
+                        return parseInt($("#sys_ct_num").val());
+                    }
+                }
+                ,before: function(obj){
+                    /*  obj.preview(function(index, file, result){
+                          $('#demo2').append('<div class="layui-col-sm3"><img style="width: 300px;height: 240px" src="'+ result +'" alt="\'+ file.name +\'" class="layui-upload-img"></div>')
+                      });*/
+                }
+                ,done: function(res){
+                    var image="/upload/"+parseInt($("#sys_ct_num").val())+"/"+res.data;
+                    if (res.code==0){
+                        $('#demo2').append('<div class="layui-col-sm3"><img style="width: 300px;height: 240px" src="'+ image +'"  class="layui-upload-img"></div>')
+                        layer.msg("上传成功！",{icon:6})
+                    }
+                }
+            });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>北京佰晟教育办公管理系统</title>
+    <link rel="stylesheet" th:href="@{../assets/libs/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{../assets/module/admin.css?v=311}"/>
+    <link rel="stylesheet" th:href="@{//at.alicdn.com/t/font_1133080_w1jrpuxg2m.css}"/>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!-- 头部 -->
+    <div class="layui-header">
+        <div class="layui-logo">
+            <img src="../assets/images/logo.png"/>
+            <cite>&nbsp;北京佰晟教育&emsp;</cite>
+        </div>
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item" lay-unselect>
+                <a ew-event="flexible" title="侧边伸缩"><i class="layui-icon layui-icon-shrink-right"></i></a>
+            </li>
+            <li class="layui-nav-item" lay-unselect>
+                <a  ew-event="refresh" title="刷新"><i class="layui-icon layui-icon-refresh-3"></i></a>
+            </li>
+        </ul>
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                <a ew-event="message" title="天气" ><div id="tp-weather-widget"></div></a>
+            </li>
+          <!--  <li class="layui-nav-item" lay-unselect>
+                <a ew-event="message" title="消息" data-url="../page/tpl/tpl-message"><i class="layui-icon layui-icon-notice"></i></a>
+            </li>-->
+            <li class="layui-nav-item" lay-unselect>
+                <a ew-event="note" title="便签" data-url="../page/tpl/tpl-note"><i class="layui-icon layui-icon-note"></i></a>
+            </li>
+            <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                <a ew-event="fullScreen" title="全屏"><i class="layui-icon layui-icon-screen-full"></i></a>
+            </li>
+            <li class="layui-nav-item" lay-unselect>
+                <a>
+                    <img th:src="@{../assets/images/head.png}" class="layui-nav-img">
+                    <cite>管理员</cite>
+                </a>
+                <dl class="layui-nav-child">
+                 <!--   <dd lay-unselect>
+                        <a ew-href="../page/template/user-info">个人中心</a>
+                    </dd>
+                    <dd lay-unselect>
+                        <a  ew-href="../page/tpl/tpl-password">修改密码</a>
+                    </dd>
+                    <hr>-->
+                    <dd lay-unselect>
+                        <a href="../logout">退出</a>
+                    </dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item" lay-unselect>
+                <a ew-event="theme" title="主题" data-url="../page/tpl/tpl-theme"><i class="layui-icon layui-icon-more-vertical"></i></a>
+            </li>
+        </ul>
+    </div>
+    <!-- 侧边栏 -->
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="admin-side-nav" lay-accordion="true"
+                style="margin: 15px 0;">
+                <li class="layui-nav-item">
+                    <a><i class="layui-icon layui-icon-home"></i>&emsp;<cite>常用管理</cite></a>
+                    <dl class="layui-nav-child">
+                        <dd> <a lay-href="supplier"><i class="layui-icon layui-icon-username"></i>&emsp;<cite>客户查询</cite></a></dd>
+                        <dd><a lay-href="region"><i class="layui-icon layui-icon-location"></i>&emsp;<cite>区域查询</cite></a></dd>
+                        <dd><a lay-href="contract"><i class="layui-icon layui-icon-search"></i>&emsp;<cite>合同查询</cite></a></dd>
+                        <dd><a lay-href="contract-add"><i class="layui-icon layui-icon-add-circle-fine"></i>&emsp;<cite>合同添加</cite></a></dd>
+                        <dd><a lay-href="regional-distribution"><i class="layui-icon layui-icon-tabs"></i>&emsp;<cite>加盟分布</cite></a></dd>
+                        <dd> <a lay-href="money"><i class="layui-icon layui-icon-rmb"></i>&emsp;<cite>金额汇总</cite></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a><i class="layui-icon layui-icon-set"></i>&emsp;<cite>系统管理</cite></a>
+                    <dl class="layui-nav-child">
+                        <dd><a lay-href="../page/system/user"><i class="layui-icon layui-icon-username"></i>&emsp;<cite>用户管理</cite></a></dd>
+                        <dd><a lay-href="../page/system/role"><i class="layui-icon layui-icon-user"></i>&emsp;<cite>权限管理</cite></a></dd>
+                       <!-- <dd><a lay-href="../page/system/loginRecord"><i class="layui-icon layui-icon-list"></i>&emsp;<cite>登录日志</cite></a></dd>-->
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 主体部分 -->
+    <div class="layui-body"></div>
+    <!-- 底部 -->
+    <div class="layui-footer">
+        北京佰晟教育 copyright © 2019 . <span class="pull-right">Version 3.1.1</span>
+    </div>
+</div>
+
+<!-- 加载动画，移除位置在common.js中 -->
+<div class="page-loading">
+    <div class="ball-loader">
+        <span></span><span></span><span></span><span></span>
+    </div>
+</div>
+
+<!-- js部分 -->
+<script type="text/javascript" th:src="@{../assets/libs/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{../assets/js/common.js?v=311}"></script>
+<script>
+    layui.use(['index'], function () {
+        var $ = layui.jquery;
+        var index = layui.index;
+        var arr=[];
+        $.ajax({
+            type: "POST",
+            url:"/sys/project/getProjects",
+            dataType: "json",
+            beforeSend: function () {
+            },
+            success: function (data) {
+                arr.push("未绑定项目");
+                for (var i=0;i<data.length;i++){
+                    arr.push(data[i]);
+                }
+                localStorage.clear();
+                localStorage.setItem("projects",arr);
+            },
+        });
+        // 默认加载主页
+        index.loadHome({
+            menuPath: 'console',
+            menuName: '<i class="layui-icon layui-icon-home"></i>'
+        });
+
+    });
+</script>
+<script>(function(T,h,i,n,k,P,a,g,e){g=function(){P=h.createElement(i);a=h.getElementsByTagName(i)[0];P.src=k;P.charset="utf-8";P.async=1;a.parentNode.insertBefore(P,a)};T["ThinkPageWeatherWidgetObject"]=n;T[n]||(T[n]=function(){(T[n].q=T[n].q||[]).push(arguments)});T[n].l=+new Date();if(T.attachEvent){T.attachEvent("onload",g)}else{T.addEventListener("load",g,false)}}(window,document,"script","tpwidget","//widget.seniverse.com/widget/chameleon.js"))</script>
+<script>tpwidget("init", {
+    "flavor": "slim",
+    "location": "WX4FBXXFKE4F",
+    "geolocation": "enabled",
+    "language": "zh-chs",
+    "unit": "c",
+    "theme": "chameleon",
+    "container": "tp-weather-widget",
+    "bubble": "enabled",
+    "alarmType": "badge",
+    "color": "#FFFFFF",
+    "uid": "U4F80B619C",
+    "hash": "f72e57552b8dd3a84bad06538720e7c7"
+});
+  tpwidget("show");
+</script>
+</body>
+</html>
