@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-
+//启动类
 @SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 @EnableScheduling
 @EnableTransactionManagement
